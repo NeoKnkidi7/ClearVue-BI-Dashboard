@@ -74,36 +74,40 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Generate financial calendar for ClearVue
+# Generate financial calendar for ClearVue (fixed version)
 def generate_financial_calendar(year):
-    months = []
-    current_date = datetime.date(year, 1, 1)
-    
-    # ClearVue financial month: March = Feb 28 – Mar 27
-    for i in range(12):
+    periods = []
+    for month in range(1, 13):  # January to December
         # Start on the last Saturday of previous month
-        if i == 0:  # January
-            start_date = datetime.date(year-1, 12, 1)
-            end_date = start_date + relativedelta(day=31)
-            last_saturday = end_date - datetime.timedelta(days=(end_date.weekday() - 5) % 7
-            start = last_saturday
+        if month == 1:  # January
+            # Previous month is December of previous year
+            prev_month = 12
+            prev_year = year - 1
         else:
-            start = end + datetime.timedelta(days=1)
+            prev_month = month - 1
+            prev_year = year
+        
+        # Get last day of previous month
+        last_day_prev = datetime.date(prev_year, prev_month, 1) + relativedelta(months=1, days=-1)
+        
+        # Calculate last Saturday of previous month
+        # Saturday is weekday 5
+        offset = (last_day_prev.weekday() - 5) % 7
+        start = last_day_prev - datetime.timedelta(days=offset)
         
         # End on the last Friday of current month
-        end_month = start + relativedelta(months=1)
-        end_date = end_month - datetime.timedelta(days=1)
-        last_friday = end_date - datetime.timedelta(days=(end_date.weekday() - 4) % 7)
-        end = last_friday
+        current_month_last = datetime.date(year, month, 1) + relativedelta(months=1, days=-1)
+        offset = (current_month_last.weekday() - 4) % 7  # Friday is 4
+        end = current_month_last - datetime.timedelta(days=offset)
         
-        months.append({
+        periods.append({
             "Financial Month": start.strftime("%B"),
             "Start Date": start.strftime("%Y-%m-%d"),
             "End Date": end.strftime("%Y-%m-%d"),
-            "Quarter": (i // 3) + 1
+            "Quarter": (month - 1) // 3 + 1
         })
     
-    return pd.DataFrame(months)
+    return pd.DataFrame(periods)
 
 # Generate sample sales data
 def generate_sales_data():
