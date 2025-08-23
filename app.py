@@ -27,51 +27,72 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS styling
+# Custom CSS styling with modern colors and better visibility
 st.markdown("""
 <style>
     /* Main styling */
     .stApp {
-        background-color: #f8f9fa;
+        background-color: #f8f9fc;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     /* Header styling */
     .header {
-        background: linear-gradient(135deg, #0d47a1, #1976d2);
+        background: linear-gradient(135deg, #2c5aa0, #4a7bcc);
         color: white;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 1.5rem;
+        padding: 1.8rem;
+        border-radius: 0.8rem;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+        margin-bottom: 1.8rem;
     }
     /* Card styling */
     .card {
         background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        border-radius: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 1.8rem;
+        margin-bottom: 1.8rem;
+        border-left: 4px solid #2c5aa0;
     }
     /* Metric styling */
     .metric-card {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        padding: 1.2rem;
+        background: linear-gradient(135deg, #ffffff, #f8f9fc);
+        border-radius: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 1.5rem;
         text-align: center;
+        border: 1px solid #e0e6ef;
+        transition: transform 0.3s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    }
+    .metric-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
     }
     .metric-value {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: bold;
-        color: #1976d2;
-        margin: 0.5rem 0;
+        color: #2c5aa0;
+        margin: 0.8rem 0;
+    }
+    .metric-change {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .positive-change {
+        color: #38a169;
     }
     /* Financial calendar styling */
     .calendar-header {
-        background-color: #0d47a1;
+        background: linear-gradient(135deg, #2c5aa0, #4a7bcc);
         color: white;
         font-weight: bold;
-        padding: 0.5rem;
-        border-radius: 0.25rem;
+        padding: 0.8rem;
+        border-radius: 0.4rem;
     }
     /* Animation for real-time updates */
     @keyframes pulse {
@@ -80,27 +101,60 @@ st.markdown("""
         100% { transform: scale(1); }
     }
     .pulse {
-        animation: pulse 1s infinite;
+        animation: pulse 1.5s infinite;
+        color: #e53e3e;
+        font-weight: bold;
     }
     /* Custom tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
+        gap: 16px;
     }
     .stTabs [data-baseweb="tab"] {
         height: 50px;
         white-space: pre-wrap;
-        background-color: #f0f2f6;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        background-color: #edf2f7;
+        border-radius: 8px 8px 0px 0px;
+        padding: 12px 24px;
+        font-weight: 600;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #0d47a1;
+        background-color: #2c5aa0;
         color: white;
+        border: 1px solid #2c5aa0;
+    }
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #2c5aa0, #4a7bcc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+    }
+    .stButton button:hover {
+        background: linear-gradient(135deg, #234b83, #3b69b3);
+        color: white;
+    }
+    /* Dataframe styling */
+    .dataframe {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    /* Custom select boxes */
+    .stSelectbox div div {
+        border-radius: 8px;
+    }
+    /* Custom multiselect */
+    .stMultiSelect div div {
+        border-radius: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# Conversion rate USD to ZAR (South African Rand)
+USD_TO_ZAR = 18.5
 
 # Generate financial calendar for ClearVue (fixed version)
 def generate_financial_calendar(year):
@@ -137,7 +191,7 @@ def generate_financial_calendar(year):
     
     return pd.DataFrame(periods)
 
-# Generate sample sales data
+# Generate sample sales data (in ZAR)
 def generate_sales_data():
     regions = ['North', 'South', 'East', 'West']
     categories = ['Electronics', 'Furniture', 'Office Supplies', 'Appliances']
@@ -158,8 +212,8 @@ def generate_sales_data():
         for region in regions:
             for category in categories:
                 for subcategory in subcategories[category]:
-                    # Base sales with some seasonality
-                    base_sales = random.randint(50, 200)
+                    # Base sales with some seasonality (in ZAR)
+                    base_sales = random.randint(900, 3600)  # Approximately $50-200 converted to ZAR
                     
                     # Weekend boost
                     if date.weekday() >= 5:  # Saturday or Sunday
@@ -189,7 +243,7 @@ def generate_sales_data():
     
     return pd.DataFrame(data)
 
-# Generate supplier data
+# Generate supplier data (in ZAR)
 def generate_supplier_data():
     suppliers = ['TechGlobal', 'FurnitureWorld', 'OfficePlus', 'ApplianceDirect', 'ElectroMart']
     categories = ['Electronics', 'Furniture', 'Office Supplies', 'Appliances']
@@ -204,7 +258,7 @@ def generate_supplier_data():
                 'Performance': random.choice(performance),
                 'Delivery Time (days)': random.randint(1, 10),
                 'Defect Rate (%)': round(random.uniform(0.1, 5.0), 2),
-                'Spend (USD)': random.randint(10000, 100000)
+                'Spend (ZAR)': random.randint(185000, 1850000)  # Approximately $10,000-100,000 converted to ZAR
             })
     
     return pd.DataFrame(data)
@@ -225,7 +279,7 @@ if 'payment_stream' not in st.session_state:
 if 'last_update' not in st.session_state:
     st.session_state.last_update = datetime.datetime.now()
 
-# Function to simulate real-time payments
+# Function to simulate real-time payments (in ZAR)
 def simulate_payments():
     products = ['Laptop Pro', 'SmartPhone X', '4K TV', 'Ergo Chair', 'Desk Lamp', 
                 'Notebook Set', 'Refrigerator', 'Microwave Oven']
@@ -235,7 +289,7 @@ def simulate_payments():
     payment = {
         'timestamp': datetime.datetime.now().strftime("%H:%M:%S"),
         'product': random.choice(products),
-        'amount': round(random.uniform(10, 1000), 2),
+        'amount': round(random.uniform(180, 18000), 2),  # Approximately $10-1000 converted to ZAR
         'customer': random.choice(customers),
         'region': random.choice(regions),
         'payment_method': random.choice(['Credit Card', 'Debit Card', 'PayPal', 'Bank Transfer'])
@@ -251,8 +305,8 @@ def simulate_payments():
 # Dashboard Header
 st.markdown("""
 <div class="header">
-    <h1 style="margin:0; padding:0">ClearVue BI Dashboard</h1>
-    <p style="margin:0; padding:0">Modern Business Intelligence for Dynamic Sales Reporting</p>
+    <h1 style="margin:0; padding:0; font-size:2.5rem;">ClearVue BI Dashboard</h1>
+    <p style="margin:0; padding:0; font-size:1.2rem;">Modern Business Intelligence for Dynamic Sales Reporting</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -266,36 +320,36 @@ with tab1:
     with col1:
         st.markdown("""
         <div class="metric-card">
-            <div>Revenue Today</div>
-            <div class="metric-value">$42,568</div>
-            <div>↑ 12% vs yesterday</div>
+            <div class="metric-title">Revenue Today</div>
+            <div class="metric-value">R 787,508</div>
+            <div class="metric-change positive-change">↑ 12% vs yesterday</div>
         </div>
         """, unsafe_allow_html=True)
         
     with col2:
         st.markdown("""
         <div class="metric-card">
-            <div>Current Financial Month</div>
-            <div class="metric-value">$1.2M</div>
-            <div>↑ 8% vs target</div>
+            <div class="metric-title">Current Financial Month</div>
+            <div class="metric-value">R 22.2M</div>
+            <div class="metric-change positive-change">↑ 8% vs target</div>
         </div>
         """, unsafe_allow_html=True)
         
     with col3:
         st.markdown("""
         <div class="metric-card">
-            <div>Regional Leader</div>
+            <div class="metric-title">Regional Leader</div>
             <div class="metric-value">West</div>
-            <div>↑ 15% growth</div>
+            <div class="metric-change positive-change">↑ 15% growth</div>
         </div>
         """, unsafe_allow_html=True)
         
     with col4:
         st.markdown("""
         <div class="metric-card">
-            <div>Top Product</div>
+            <div class="metric-title">Top Product</div>
             <div class="metric-value">Laptop Pro</div>
-            <div>↑ 22% this month</div>
+            <div class="metric-change positive-change">↑ 22% this month</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -311,9 +365,9 @@ with tab1:
         st.markdown("""
         <div class="card">
             <h4>Data Metrics</h4>
-            <p>Report Generation: <span style="color:green">1.8s ⚡</span></p>
-            <p>Data Accuracy: 99.7%</p>
-            <p>Schema Changes: Reduced by 78%</p>
+            <p>Report Generation: <span style="color:#38a169; font-weight:600">1.8s ⚡</span></p>
+            <p>Data Accuracy: <span style="color:#38a169; font-weight:600">99.7%</span></p>
+            <p>Schema Changes: <span style="color:#e53e3e; font-weight:600">Reduced by 78%</span></p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -321,9 +375,9 @@ with tab1:
         st.markdown("""
         <div class="card">
             <h4>Business Impact</h4>
-            <p>Decision Speed: Improved by 52%</p>
-            <p>Cost Reduction: 23% YoY</p>
-            <p>Customer Satisfaction: ↑ 18%</p>
+            <p>Decision Speed: <span style="color:#38a169; font-weight:600">Improved by 52%</span></p>
+            <p>Cost Reduction: <span style="color:#38a169; font-weight:600">23% YoY</span></p>
+            <p>Customer Satisfaction: <span style="color:#38a169; font-weight:600">↑ 18%</span></p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -331,9 +385,9 @@ with tab1:
         st.markdown("""
         <div class="card">
             <h4>System Health</h4>
-            <p>Uptime: 99.99%</p>
-            <p>Data Freshness: < 5min</p>
-            <p>API Response: 120ms avg</p>
+            <p>Uptime: <span style="color:#38a169; font-weight:600">99.99%</span></p>
+            <p>Data Freshness: <span style="color:#38a169; font-weight:600">< 5min</span></p>
+            <p>API Response: <span style="color:#38a169; font-weight:600">120ms avg</span></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -368,13 +422,13 @@ with tab2:
         st.markdown("""
         <div class="card">
             <h4>Monthly Targets</h4>
-            <p>Revenue: $1.3M / $1.5M</p>
+            <p>Revenue: R 24.1M / R 27.8M</p>
             <div style="background:#e0e0e0; border-radius:5px; height:10px; margin:5px 0">
-                <div style="background:#4caf50; width:87%; height:10px; border-radius:5px"></div>
+                <div style="background:#38a169; width:87%; height:10px; border-radius:5px"></div>
             </div>
             <p>Units: 12.4K / 15K</p>
             <div style="background:#e0e0e0; border-radius:5px; height:10px; margin:5px 0">
-                <div style="background:#ff9800; width:83%; height:10px; border-radius:5px"></div>
+                <div style="background:#d69e2e; width:83%; height:10px; border-radius:5px"></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -424,10 +478,13 @@ with tab2:
         )
         fig.update_layout(
             xaxis_title='Period',
-            yaxis_title='Revenue (USD)',
+            yaxis_title='Revenue (ZAR)',
             hovermode="x unified",
-            template="plotly_white"
+            template="plotly_white",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
+        fig.update_traces(line=dict(color='#2c5aa0', width=3))
         st.plotly_chart(fig, use_container_width=True)
         
         # Regional performance pie chart
@@ -437,7 +494,12 @@ with tab2:
             names='Region',
             values='Revenue',
             title='Revenue Distribution by Region',
-            hole=0.4
+            hole=0.4,
+            color_discrete_sequence=['#2c5aa0', '#4a7bcc', '#6b9ae6', '#8db5ff']
+        )
+        fig2.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
         st.plotly_chart(fig2, use_container_width=True)
         
@@ -449,10 +511,16 @@ with tab2:
             y='Revenue',
             title='Revenue by Category',
             color='Category',
-            text='Revenue'
+            text='Revenue',
+            color_discrete_sequence=['#2c5aa0', '#4a7bcc', '#6b9ae6', '#8db5ff']
         )
-        fig3.update_traces(texttemplate='$%{text:,.0f}', textposition='outside')
-        fig3.update_layout(template="plotly_white")
+        fig3.update_traces(texttemplate='R %{text:,.0f}', textposition='outside')
+        fig3.update_layout(
+            template="plotly_white",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            showlegend=False
+        )
         st.plotly_chart(fig3, use_container_width=True)
 
 with tab3:
@@ -463,25 +531,27 @@ with tab3:
     with supplier_col1:
         # Supplier performance summary
         fig3 = px.bar(
-            st.session_state.supplier_data.sort_values('Spend (USD)', ascending=False),
+            st.session_state.supplier_data.sort_values('Spend (ZAR)', ascending=False),
             x='Supplier',
-            y='Spend (USD)',
+            y='Spend (ZAR)',
             color='Performance',
             title='Supplier Spend & Performance',
-            text='Spend (USD)',
+            text='Spend (ZAR)',
             color_discrete_map={
-                'Excellent': '#2ecc71',
-                'Good': '#3498db',
-                'Average': '#f39c12',
-                'Poor': '#e74c3c'
+                'Excellent': '#38a169',
+                'Good': '#d69e2e',
+                'Average': '#d69e2e',
+                'Poor': '#e53e3e'
             }
         )
         fig3.update_layout(
             xaxis_title='Supplier',
-            yaxis_title='Spend (USD)',
-            template="plotly_white"
+            yaxis_title='Spend (ZAR)',
+            template="plotly_white",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
-        fig3.update_traces(texttemplate='$%{text:,.0f}', textposition='outside')
+        fig3.update_traces(texttemplate='R %{text:,.0f}', textposition='outside')
         st.plotly_chart(fig3, use_container_width=True)
         
         # Delivery time analysis
@@ -490,9 +560,14 @@ with tab3:
             x='Category',
             y='Delivery Time (days)',
             title='Delivery Time by Category',
-            color='Category'
+            color='Category',
+            color_discrete_sequence=['#2c5aa0', '#4a7bcc', '#6b9ae6', '#8db5ff']
         )
-        fig4.update_layout(template="plotly_white")
+        fig4.update_layout(
+            template="plotly_white",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+        )
         st.plotly_chart(fig4, use_container_width=True)
 
     with supplier_col2:
@@ -513,8 +588,8 @@ with tab3:
             <p>✔️ Dynamic performance scoring</p>
             <p>✔️ Spend analysis by category</p>
             <p>✔️ Flexible schema for future expansion</p>
-            <div style="background:#e3f2fd; padding:10px; border-radius:5px; margin-top:10px">
-                Schema Flexibility Score: 92% ✅
+            <div style="background:#e6fffa; padding:12px; border-radius:8px; margin-top:12px; border-left: 4px solid #38a169;">
+                <span style="font-weight:600; color:#234e52;">Schema Flexibility Score: 92% ✅</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -527,10 +602,16 @@ with tab3:
             y='Defect Rate (%)',
             title='Average Defect Rate by Category',
             color='Category',
-            text='Defect Rate (%)'
+            text='Defect Rate (%)',
+            color_discrete_sequence=['#2c5aa0', '#4a7bcc', '#6b9ae6', '#8db5ff']
         )
         fig5.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
-        fig5.update_layout(template="plotly_white", showlegend=False)
+        fig5.update_layout(
+            template="plotly_white", 
+            showlegend=False,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+        )
         st.plotly_chart(fig5, use_container_width=True)
 
 with tab4:
@@ -545,27 +626,27 @@ with tab4:
     with finance_col1:
         st.markdown("""
         <div class="metric-card">
-            <div>Q3 Revenue</div>
-            <div class="metric-value">$3.8M</div>
-            <div>↑ 12% vs target</div>
+            <div class="metric-title">Q3 Revenue</div>
+            <div class="metric-value">R 70.3M</div>
+            <div class="metric-change positive-change">↑ 12% vs target</div>
         </div>
         """, unsafe_allow_html=True)
     
     with finance_col2:
         st.markdown("""
         <div class="metric-card">
-            <div>Operating Margin</div>
+            <div class="metric-title">Operating Margin</div>
             <div class="metric-value">24.5%</div>
-            <div>↑ 3.2% YoY</div>
+            <div class="metric-change positive-change">↑ 3.2% YoY</div>
         </div>
         """, unsafe_allow_html=True)
         
     with finance_col3:
         st.markdown("""
         <div class="metric-card">
-            <div>Cash Flow</div>
-            <div class="metric-value">$1.2M</div>
-            <div>↑ 18% vs Q2</div>
+            <div class="metric-title">Cash Flow</div>
+            <div class="metric-value">R 22.2M</div>
+            <div class="metric-change positive-change">↑ 18% vs Q2</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -584,7 +665,7 @@ with tab4:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align:center; color:#777; font-size:0.9rem">
+<div style="text-align:center; color:#718096; font-size:0.9rem; padding:1.5rem;">
     ClearVue BI Dashboard • Modern NoSQL Analytics Solution • 
     Report Generated: {date} • 
     <span class="pulse">⚡ Real-time Data</span>
@@ -607,9 +688,14 @@ if (datetime.datetime.now() - st.session_state.last_update).seconds > 5:
         if not payment_df.empty:
             # Style the payment table
             styled_payments = payment_df.style \
-                .format({'amount': '${:,.2f}'}) \
-                .applymap(lambda x: 'color: #2ecc71; font-weight: bold;', subset=['amount']) \
-                .set_properties(**{'background-color': '#f8f9fa', 'border': '1px solid #e0e0e0'})
+                .format({'amount': 'R {:,.2f}'}) \
+                .applymap(lambda x: 'color: #38a169; font-weight: bold;', subset=['amount']) \
+                .set_properties(**{'background-color': '#f8f9fc', 'border': '1px solid #e0e6ef'}) \
+                .set_table_styles([
+                    {'selector': 'th', 'props': [('background-color', '#2c5aa0'), ('color', 'white')]},
+                    {'selector': 'tr:nth-of-type(odd)', 'props': [('background-color', '#edf2f7')]},
+                    {'selector': 'tr:nth-of-type(even)', 'props': [('background-color', '#f8f9fc')]}
+                ])
             
             # Display with alternating row colors
             st.dataframe(styled_payments, height=300, use_container_width=True)
@@ -621,9 +707,9 @@ if (datetime.datetime.now() - st.session_state.last_update).seconds > 5:
         # Style the calendar table
         styled_calendar = st.session_state.financial_calendar.style \
             .set_table_styles([
-                {'selector': 'th', 'props': [('background-color', '#0d47a1'), ('color', 'white')]},
-                {'selector': 'tr:nth-of-type(odd)', 'props': [('background-color', '#e3f2fd')]},
-                {'selector': 'tr:nth-of-type(even)', 'props': [('background-color', '#bbdefb')]}
+                {'selector': 'th', 'props': [('background-color', '#2c5aa0'), ('color', 'white')]},
+                {'selector': 'tr:nth-of-type(odd)', 'props': [('background-color', '#edf2f7')]},
+                {'selector': 'tr:nth-of-type(even)', 'props': [('background-color', '#f8f9fc')]}
             ]) \
             .set_properties(**{'text-align': 'center'})
         
