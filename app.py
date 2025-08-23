@@ -32,72 +32,164 @@ st.markdown("""
 <style>
     /* Main styling */
     .stApp {
-        background-color: #f8f9fa;
+        background-color: #f8fafc;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
+    
     /* Header styling */
     .header {
-        background: linear-gradient(135deg, #0d47a1, #1976d2);
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 1.5rem;
+        padding: 1.8rem;
+        border-radius: 0.8rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.8rem;
     }
+    
     /* Card styling */
     .card {
         background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        border-radius: 0.8rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        padding: 1.8rem;
+        margin-bottom: 1.8rem;
+        border: 1px solid #e2e8f0;
     }
+    
     /* Metric styling */
     .metric-card {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        padding: 1.2rem;
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border-radius: 0.8rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        padding: 1.5rem;
         text-align: center;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
     }
+    
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .metric-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    
     .metric-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #1976d2;
-        margin: 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4f46e5;
+        margin: 0.8rem 0;
     }
+    
+    .metric-change {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .positive-change {
+        color: #10b981;
+    }
+    
+    .negative-change {
+        color: #ef4444;
+    }
+    
     /* Financial calendar styling */
     .calendar-header {
-        background-color: #0d47a1;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
-        font-weight: bold;
-        padding: 0.5rem;
-        border-radius: 0.25rem;
+        font-weight: 600;
+        padding: 0.8rem;
+        border-radius: 0.4rem;
     }
+    
     /* Animation for real-time updates */
     @keyframes pulse {
         0% { transform: scale(1); }
         50% { transform: scale(1.03); }
         100% { transform: scale(1); }
     }
+    
     .pulse {
-        animation: pulse 1s infinite;
+        animation: pulse 1.5s infinite;
+        color: #ef4444;
+        font-weight: 600;
     }
+    
     /* Custom tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
+        gap: 16px;
     }
+    
     .stTabs [data-baseweb="tab"] {
         height: 50px;
         white-space: pre-wrap;
-        background-color: #f0f2f6;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        background-color: #f1f5f9;
+        border-radius: 8px 8px 0px 0px;
+        padding: 12px 24px;
+        font-weight: 600;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
     }
+    
     .stTabs [aria-selected="true"] {
-        background-color: #0d47a1;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
+        border: 1px solid #4f46e5;
+        box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    
+    .stButton button:hover {
+        background: linear-gradient(135deg, #4338ca, #6d28d9);
+        color: white;
+        box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+    }
+    
+    /* Dataframe styling */
+    .dataframe {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Custom select boxes */
+    .stSelectbox div div {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Custom multiselect */
+    .stMultiSelect div div {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Progress bars */
+    .stProgress > div > div {
+        background-color: #4f46e5;
+    }
+    
+    /* Code blocks */
+    .stCodeBlock {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
     }
 </style>
 """, unsafe_allow_html=True)
